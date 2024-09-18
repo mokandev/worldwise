@@ -5,7 +5,7 @@ import Message from "./Message";
 import Spinner from "./Spinner";
 
 interface ICityListProps {
-  isLoading: Boolean;
+  isLoading: boolean;
   cities: ICity[];
 }
 
@@ -17,7 +17,6 @@ interface ICountry {
 
 export default function CountryList({ cities, isLoading }: ICityListProps) {
 
-  console.log('cities', cities)
   if (isLoading) return <Spinner />;
 
   const countries: ICountry[] = cities.reduce<ICountry[]>(
