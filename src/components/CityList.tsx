@@ -1,15 +1,13 @@
-import { ICity } from "../App";
+import { ICity, useCities } from "../contexts/CitiesContext";
 import CityItem from "./CityItem";
 import styles from "./CityList.module.css";
 import Message from "./Message";
 import Spinner from "./Spinner";
 
-interface ICityListProps {
-  isLoading: Boolean;
-  cities: ICity[];
-}
 
-export default function CityList({ cities, isLoading }: ICityListProps) {
+export default function CityList() {
+  const {cities, isLoading} = useCities();
+
   if (isLoading) return <Spinner />;
 
   if(!cities.length) return <Message message="Add your first city by clicking in a city on the map" />

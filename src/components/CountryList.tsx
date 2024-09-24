@@ -1,13 +1,9 @@
-import { ICity } from "../App";
+import { useCities } from "../contexts/CitiesContext";
 import CountryItem from "./CountryItem";
 import styles from "./CountryList.module.css";
 import Message from "./Message";
 import Spinner from "./Spinner";
 
-interface ICityListProps {
-  isLoading: boolean;
-  cities: ICity[];
-}
 
 interface ICountry {
   country: string
@@ -15,7 +11,8 @@ interface ICountry {
   id: number
 }
 
-export default function CountryList({ cities, isLoading }: ICityListProps) {
+export default function CountryList() {
+  const {cities, isLoading} = useCities();
 
   if (isLoading) return <Spinner />;
 
