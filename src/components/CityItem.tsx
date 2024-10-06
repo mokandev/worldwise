@@ -6,7 +6,7 @@ interface ICityItemProps {
   city: ICity;
 }
 
-const formatDate = (date: string) =>
+const formatDate = (date: Date) =>
   new Intl.DateTimeFormat("en", {
     day: "numeric",
     month: "long",

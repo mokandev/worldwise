@@ -15,7 +15,7 @@ export default function Map() {
 
 	useEffect(() => {
 		if (mapLat && mapLng) {
-			setMapPosition([mapLat, mapLng]);
+			setMapPosition([Number(mapLat), Number(mapLng)]);
 		}
 	}, [mapLat, mapLng]);
 

@@ -1,95 +1,116 @@
-import {
-  createContext,
-  FC,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react';
 
 export interface ICity {
-  cityName: string;
-  country: string;
-  emoji: string;
-  date: string;
-  notes: string;
-  position: {
-    lat: number;
-    lng: number;
-  };
-  id: number;
+	cityName: string;
+	country: string;
+	emoji: string;
+	date: Date;
+	notes: string;
+	position: {
+		lat: number;
+		lng: number;
+	};
+	id: number;
+}
+
+export interface INewCity {
+	cityName: string;
+	country: string;
+	emoji: string;
+	date: Date;
+	notes: string;
+	position: {
+		lat: number;
+		lng: number;
+	};
 }
 
 interface ICitiesContext {
-  cities: ICity[];
-  isLoading: boolean;
-  currentCity: ICity | NonNullable<unknown>,
-  getCity: (id: string) => Promise<void>;
+	cities: ICity[];
+	isLoading: boolean;
+	currentCity: ICity | NonNullable<unknown>;
+	getCity: (id: string) => Promise<void>;
+	createCity: (newCity: INewCity) => Promise<void>;
 }
 
 const defaultContextValue: ICitiesContext = {
-  cities: [],
-  isLoading: false,
-  currentCity: {},
-  getCity: async () => {},
+	cities: [],
+	isLoading: false,
+	currentCity: {},
+	getCity: async () => {},
+	createCity: async () => {},
 };
 
 const CitiesContext = createContext<ICitiesContext>(defaultContextValue);
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = 'http://localhost:8000';
 
 interface ICitiesProviderProps {
-  children: ReactNode;
+	children: ReactNode;
 }
 
 const CitiesProvider: FC<ICitiesProviderProps> = ({ children }) => {
-  const [cities, setCities] = useState<ICity[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentCity, setCurrentCity] = useState({});
+	const [cities, setCities] = useState<ICity[]>([]);
+	const [isLoading, setIsLoading] = useState(false);
+	const [currentCity, setCurrentCity] = useState({});
 
-  async function fetchCities() {
-    try {
-      setIsLoading(true);
-      const res = await fetch(`${BASE_URL}/cities`);
-      const data = await res.json();
-      setCities(data);
-    } catch {
-      alert("There was an error loading data..");
-    } finally {
-      setIsLoading(false);
-    }
-  }
+	async function fetchCities() {
+		try {
+			setIsLoading(true);
+			const res = await fetch(`${BASE_URL}/cities`);
+			const data = await res.json();
+			setCities(data);
+		} catch {
+			alert('There was an error loading data..');
+		} finally {
+			setIsLoading(false);
+		}
+	}
 
-  useEffect(() => {
-    fetchCities();
-  }, []);
+	useEffect(() => {
+		fetchCities();
+	}, []);
 
-  const getCity = async (id: string) => {
-    setCurrentCity({})
-    try {
-      setIsLoading(true);
-      const res = await fetch(`${BASE_URL}/cities/${id}`);
-      const data = await res.json();
-      setCurrentCity(data);
-    } catch {
-      alert("There was an error loading data..");
-    } finally {
-      setIsLoading(false);
-    }
-  }
+	const getCity = async (id: string) => {
+		setCurrentCity({});
+		try {
+			setIsLoading(true);
+			const res = await fetch(`${BASE_URL}/cities/${id}`);
+			const data = await res.json();
+			setCurrentCity(data);
+		} catch {
+			alert('There was an error loading data..');
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-  return (
-    <CitiesContext.Provider value={{ cities, isLoading, currentCity, getCity }}>
-      {children}
-    </CitiesContext.Provider>
-  );
+	const createCity = async (newCity: INewCity) => {
+		try {
+			setIsLoading(true);
+			const res = await fetch(`${BASE_URL}/cities`, {
+				method: 'POST',
+				body: JSON.stringify(newCity),
+				headers: { 'Content-Type': 'application/json' },
+			});
+			const data = await res.json();
+
+      setCities((cities) => [...cities, data])
+
+		} catch {
+			alert('There was an error loading data..');
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	return <CitiesContext.Provider value={{ cities, isLoading, currentCity, getCity, createCity }}>{children}</CitiesContext.Provider>;
 };
 
 const useCities = () => {
-  const context = useContext(CitiesContext);
-  if (context === undefined)
-    throw new Error("CitiesContext was used outside the CitiesProvider");
-  return context;
+	const context = useContext(CitiesContext);
+	if (context === undefined) throw new Error('CitiesContext was used outside the CitiesProvider');
+	return context;
 };
 
 export { CitiesProvider, useCities };
