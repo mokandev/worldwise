@@ -32,6 +32,7 @@ interface ICitiesContext {
 	getCity: (id: string) => Promise<void>;
 	createCity: (newCity: INewCity) => Promise<void>;
 	deleteCity: (id: number) => Promise<void>;
+	error: string;
 }
 
 const defaultContextValue: ICitiesContext = {
@@ -41,6 +42,7 @@ const defaultContextValue: ICitiesContext = {
 	getCity: async () => {},
 	createCity: async () => {},
 	deleteCity: async () => {},
+	error: '',
 };
 
 const CitiesContext = createContext<ICitiesContext>(defaultContextValue);
@@ -60,7 +62,7 @@ interface IState {
 
 interface IAction {
 	type: 'cities/loaded' | 'cities/created' | 'cities/deleted' | 'loading' | 'rejected' | 'city/loaded';
-  payload?: ICity[] | ICity | number | string;
+	payload?: ICity[] | ICity | number | string;
 }
 
 const initialState: IState = {
@@ -70,7 +72,7 @@ const initialState: IState = {
 	error: '',
 };
 
-function reducer(state: IState, action: IAction): IState  {
+function reducer(state: IState, action: IAction): IState {
 	switch (action.type) {
 		case 'loading':
 			return {
@@ -88,22 +90,24 @@ function reducer(state: IState, action: IAction): IState  {
 		case 'city/loaded':
 			return {
 				...state,
-        isLoading: false,
+				isLoading: false,
 				currentCity: action.payload as ICity,
 			};
 
 		case 'cities/created':
 			return {
 				...state,
-        isLoading: false,
+				isLoading: false,
 				cities: [...state.cities, action.payload] as ICity[],
+				currentCity: action.payload as ICity,
 			};
 
 		case 'cities/deleted':
 			return {
 				...state,
-        isLoading: false,
+				isLoading: false,
 				cities: state.cities.filter(city => city.id !== action.payload),
+				currentCity: {},
 			};
 
 		case 'rejected':
@@ -119,7 +123,7 @@ function reducer(state: IState, action: IAction): IState  {
 }
 
 const CitiesProvider: FC<ICitiesProviderProps> = ({ children }) => {
-	const [{ cities, isLoading, currentCity }, dispatch] = useReducer(reducer, initialState);
+	const [{ cities, isLoading, currentCity, error }, dispatch] = useReducer(reducer, initialState);
 	async function fetchCities() {
 		dispatch({ type: 'loading' });
 		try {
@@ -136,6 +140,7 @@ const CitiesProvider: FC<ICitiesProviderProps> = ({ children }) => {
 	}, []);
 
 	const getCity = async (id: string) => {
+		if (Number(id) === (currentCity as ICity).id) return;
 		dispatch({ type: 'loading' });
 		try {
 			const res = await fetch(`${BASE_URL}/cities/${id}`);
@@ -175,7 +180,7 @@ const CitiesProvider: FC<ICitiesProviderProps> = ({ children }) => {
 		}
 	};
 
-	return <CitiesContext.Provider value={{ cities, isLoading, currentCity, getCity, createCity, deleteCity }}>{children}</CitiesContext.Provider>;
+	return <CitiesContext.Provider value={{ cities, isLoading, currentCity, getCity, createCity, deleteCity, error }}>{children}</CitiesContext.Provider>;
 };
 
 const useCities = () => {
