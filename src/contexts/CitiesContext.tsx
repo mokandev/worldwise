@@ -23,7 +23,7 @@ export interface ICity {
 interface ICitiesContext {
   cities: ICity[];
   isLoading: boolean;
-  currentCity: ICity | {},
+  currentCity: ICity | NonNullable<unknown>,
   getCity: (id: string) => Promise<void>;
 }
 
