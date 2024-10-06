@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useReducer } from 'react';
+import { createContext, FC, ReactNode, useContext, useReducer } from 'react';
 
 interface IContext {
 	user: IFakeUser | null;
@@ -25,7 +25,7 @@ interface IState {
 	isAuthenticated: boolean;
 }
 
-interface IFakeUser {
+export interface IFakeUser {
 	name: string;
 	email: string;
 	password: string;
@@ -70,7 +70,7 @@ const FAKE_USER: IFakeUser = {
 	avatar: 'https://i.pravatar.cc/100?u=zz',
 };
 
-function AuthProvider({ children }: IAuthProviderProps) {
+const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
 	const [{ user, isAuthenticated }, dispatch] = useReducer(reducer, initialState);
 
 	function login(email: string, password: string) {
@@ -84,7 +84,7 @@ function AuthProvider({ children }: IAuthProviderProps) {
 	}
 
 	return <AuthContext.Provider value={{ isAuthenticated, login, logout, user }}>{children}</AuthContext.Provider>;
-}
+};
 
 function useAuth() {
 	const context = useContext(AuthContext);
@@ -92,6 +92,8 @@ function useAuth() {
 	if (context === undefined) {
 		throw new Error('AuthContext was used outsied of AuthProvider');
 	}
+
+	return context;
 }
 
 export { AuthProvider, useAuth };
