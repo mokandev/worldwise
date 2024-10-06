@@ -31,6 +31,7 @@ interface ICitiesContext {
 	currentCity: ICity | NonNullable<unknown>;
 	getCity: (id: string) => Promise<void>;
 	createCity: (newCity: INewCity) => Promise<void>;
+	deleteCity: (id: number) => Promise<void>;
 }
 
 const defaultContextValue: ICitiesContext = {
@@ -39,6 +40,7 @@ const defaultContextValue: ICitiesContext = {
 	currentCity: {},
 	getCity: async () => {},
 	createCity: async () => {},
+	deleteCity: async () => {},
 };
 
 const CitiesContext = createContext<ICitiesContext>(defaultContextValue);
@@ -95,16 +97,30 @@ const CitiesProvider: FC<ICitiesProviderProps> = ({ children }) => {
 			});
 			const data = await res.json();
 
-      setCities((cities) => [...cities, data])
-
+			setCities(cities => [...cities, data]);
 		} catch {
-			alert('There was an error loading data..');
+			alert('There was an error creating city..');
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
-	return <CitiesContext.Provider value={{ cities, isLoading, currentCity, getCity, createCity }}>{children}</CitiesContext.Provider>;
+	const deleteCity = async (id: number) => {
+		try {
+			setIsLoading(true);
+			await fetch(`${BASE_URL}/cities/${id}`, {
+				method: 'DELETE',
+			});
+
+			setCities(cities => cities.filter(city => city.id !== id));
+		} catch (error) {
+			alert('There was an error deleting city..');
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	return <CitiesContext.Provider value={{ cities, isLoading, currentCity, getCity, createCity, deleteCity }}>{children}</CitiesContext.Provider>;
 };
 
 const useCities = () => {
