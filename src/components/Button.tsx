@@ -1,8 +1,15 @@
-import React from 'react'
-import styles from "./Button.module.css"
+import styles from "./Button.module.css";
 
-export default function Button({ children, onClick, type}) {
+interface IButtonProps {
+  children: string;
+  onClick: (e: React.SyntheticEvent) => void;
+  type: "back" | "primary" | "position";
+}
+
+export default function Button({ children, onClick, type }: IButtonProps) {
   return (
-    <button className={`${styles.btn} ${styles[type]}`} onClick={onClick}>{children}</button>
-  )
+    <button className={`${styles.btn} ${styles[type]}`} onClick={onClick}>
+      {children}
+    </button>
+  );
 }

@@ -5,7 +5,7 @@ import Message from "./Message";
 import Spinner from "./Spinner";
 
 
-interface ICountry {
+export interface ICountry {
   country: string
   emoji: string
   id: number

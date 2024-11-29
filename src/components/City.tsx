@@ -5,13 +5,13 @@ import { ICity, useCities } from "../contexts/CitiesContext";
 import Spinner from "./Spinner";
 import BackButton from "./BackButton";
 
-const formatDate = (date: string | null) =>
+const formatDate = (date: Date | null) =>
   new Intl.DateTimeFormat("en", {
     day: "numeric",
     month: "long",
     year: "numeric",
     weekday: "long",
-  }).format(new Date(date as string));
+  }).format(new Date(date as Date));
 
 function City() {
   const { id } = useParams<{ id: string }>();
