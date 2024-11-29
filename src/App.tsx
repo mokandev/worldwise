@@ -10,14 +10,6 @@ import City from "./components/City";
 import Form from "./components/Form";
 import SpinnerFullPage from "./components/SpinnerFullPage";
 
-// import AppLayout from "./pages/AppLayout";
-// import Homepage from "./pages/Homepage";
-// import Product from "./pages/Product";
-// import Pricing from "./pages/Pricing";
-// import PageNotFound from "./pages/PageNotFound";
-// import Login from "./pages/Login";
-
-
 // BEFORE OPTIMIZING THE BUNDLE
 // dist/index.html                   0.47 kB │ gzip:   0.29 kB
 // dist/assets/icon-98c6b6d7.png    20.20 kB
